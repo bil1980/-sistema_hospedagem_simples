@@ -1,111 +1,67 @@
-# Sistema de Hospedagem
+Sistema de Hospedagem
 
-## 1. Sobre o projeto
+1. Sobre o projeto
 
-O Sistema de Hospedagem é uma aplicação desenvolvida em Python com interface gráfica utilizando Tkinter. O sistema permite cadastrar hóspedes, criar reservas, calcular valores de hospedagem e consultar relatórios.
+Sistema desenvolvido em Python com Tkinter, integrado ao Supabase e Redis, para gerenciamento de hóspedes e reservas.
 
-O projeto utiliza o Supabase como banco de dados principal e o Redis como mecanismo de cache, buscando melhorar o desempenho das consultas.
+2. Tecnologias utilizadas
 
-## 2. Tecnologias utilizadas
+Python e Tkinter: desenvolvimento da aplicação e interface gráfica.
 
-- **Python:** linguagem utilizada no desenvolvimento.
-- **Tkinter:** criação da interface gráfica.
-- **Supabase:** banco de dados na nuvem.
-- **Redis:** armazenamento temporário de dados (cache).
-- **Memurai:** servidor compatível com Redis para execução no Windows.
+Supabase: armazenamento dos dados.
 
-## 3. Funcionalidades
+Redis: armazenamento temporário (cache).
 
-- Cadastro de hóspedes.
-- Criação de reservas.
-- Cálculo do valor total da hospedagem.
-- Consulta de reservas por meio de relatório.
-- Integração com funções e Views do Supabase.
-- Utilização do Redis para armazenar temporariamente os resultados das consultas.
-- Exibição do banco utilizado e do tempo de consulta.
+Memurai: execução do Redis no Windows.
 
-## 4. Estrutura do banco de dados
+python-dotenv: gerenciamento das variáveis de ambiente.
 
-O sistema utiliza duas tabelas principais:
+3. Configuração do .env
 
-### Tabela hospede
+O arquivo .env armazena as credenciais necessárias para conectar o sistema ao Supabase e ao Redis.
 
-Armazena as informações dos hóspedes.
+Crie um arquivo chamado .env na pasta principal do projeto e adicione:
 
-- id
-- nome
-- email
-- telefone
+SUPABASE_URL=sua_url_do_supabase
+SUPABASE_KEY=sua_chave_do_supabase
+REDIS_URL=redis://localhost:6379/0
 
-### Tabela reserva
+Substitua os valores pelas suas credenciais.
 
-Armazena as informações das reservas.
+O arquivo .env não deve ser compartilhado, pois contém informações privadas. Para facilitar a configuração, o projeto pode incluir um .env.example sem credenciais reais.
 
-- id
-- id_hospede
-- check_in
-- check_out
-- valor_diaria
-- status
+4. Utilização do Redis e Memurai
 
-A tabela reserva possui relacionamento com a tabela hospede por meio da chave estrangeira id_hospede.
+Foi utilizado o Memurai para executar o Redis no Windows.
 
-O projeto também utiliza:
+O Redis é responsável pelo cache do relatório de reservas. Quando o relatório é consultado, o sistema verifica primeiro se os dados estão armazenados no Redis.
 
-- **View vw_reservas:** reúne informações dos hóspedes e suas reservas.
-- **Function criar_reserva:** realiza o cadastro de uma reserva.
-- **Function calcular_valor_reserva:** calcula o valor da hospedagem.
+Se estiverem, são recuperados diretamente do cache.
 
-## 5. Instalação das dependências
+Caso contrário, são consultados no Supabase e armazenados no Redis por 50 segundos.
 
-É necessário ter Python instalado no computador.
+Quando um hóspede é cadastrado ou uma reserva é criada, o cache é removido para garantir que as próximas consultas utilizem informações atualizadas.
 
-No terminal do VS Code, execute:
+O Redis contribui para reduzir consultas repetidas ao Supabase e melhorar o tempo de resposta do relatório.
 
-```bash
-pip install supabase redis
-```
+5. Instalação e execução
 
-## 6. Configuração do Supabase
+Instale as dependências:
 
-1. Acesse o painel do Supabase.
-2. Abra o projeto utilizado pela aplicação.
-3. Acesse Project Settings e depois API Keys.
-4. Copie a URL do projeto e a chave publishable.
-5. Insira as informações no código Python.
+pip install -r requirements.txt
 
-Exemplo:
+Configure o .env, inicie o serviço do Memurai e execute:
 
-```python
-SUPABASE_URL = "SUA_URL_DO_PROJETO"
-SUPABASE_KEY = "SUA_CHAVE_PUBLISHABLE"
-```
+python main.py
 
-A chave deve pertencer ao mesmo projeto informado na URL.
+6. Funcionalidades
 
-## 7. Instalação e configuração do Redis
+Cadastro de hóspedes.
 
-Para executar o Redis no Windows, o projeto utiliza o Memurai, uma implementação compatível com o protocolo Redis.
+Criação de reservas.
 
-1. Acesse https://www.memurai.com/get-memurai.
-2. Baixe e instale a versão para desenvolvimento.
-3. Abra os serviços do Windows utilizando `services.msc`.
-4. Localize o serviço Memurai e inicie-o.
+Cálculo do valor da hospedagem.
 
-Depois, configure a conexão no Python:
+Relatório de reservas com utilização de cache.
 
-```python
-REDIS_URL = "redis://localhost:6379/0"
-```
-
-O sistema verifica a conexão utilizando o comando `ping()`.
-
-## 8. Como o Redis funciona no projeto
-
-O Redis é utilizado para armazenar temporariamente os dados do relatório de reservas.
-
-O funcionamento acontece em três etapas:
-
-1. Quando o usuário abre o relatório, o sistema verifica se os dados estão armazenados no Redis.
-2. Se os dados estiverem disponíveis, são recuperados diretamente do cache.
-3. Se não estiverem disponíveis, o
+Observação: o Supabase armazena os dados permanentemente, enquanto o Redis mantém temporariamente os resultados das consultas para melhorar o desempenho do sistema.
