@@ -6,7 +6,11 @@ Sistema desenvolvido em Python com Tkinter, integrado ao Supabase e Redis, para 
 
 2. Tecnologias utilizadas
 
-Python e Tkinter: desenvolvimento da aplicação e interface gráfica.
+Python: linguagem de programação.
+
+Tkinter: criação da interface gráfica.
+
+VS Code: ambiente de desenvolvimento.
 
 Supabase: armazenamento dos dados.
 
@@ -28,29 +32,33 @@ REDIS_URL=redis://localhost:6379/0
 
 Substitua os valores pelas suas credenciais.
 
-O arquivo .env não deve ser compartilhado, pois contém informações privadas. Para facilitar a configuração, o projeto pode incluir um .env.example sem credenciais reais.
+O arquivo .env não deve ser compartilhado, pois contém informações privadas. O arquivo .env.example pode ser disponibilizado como modelo.
 
 4. Utilização do Redis e Memurai
 
 Foi utilizado o Memurai para executar o Redis no Windows.
 
-O Redis é responsável pelo cache do relatório de reservas. Quando o relatório é consultado, o sistema verifica primeiro se os dados estão armazenados no Redis.
+O Redis é responsável pelo cache do relatório de reservas:
 
-Se estiverem, são recuperados diretamente do cache.
+Verifica primeiro se os dados estão armazenados no cache.
 
-Caso contrário, são consultados no Supabase e armazenados no Redis por 50 segundos.
+Caso estejam, recupera diretamente do Redis.
 
-Quando um hóspede é cadastrado ou uma reserva é criada, o cache é removido para garantir que as próximas consultas utilizem informações atualizadas.
+Caso contrário, consulta o Supabase e armazena os resultados no Redis por 50 segundos.
 
-O Redis contribui para reduzir consultas repetidas ao Supabase e melhorar o tempo de resposta do relatório.
+Quando um hóspede é cadastrado ou uma reserva é criada, o cache é removido para garantir informações atualizadas.
+
+Isso reduz consultas repetidas ao Supabase e melhora o tempo de resposta do relatório.
 
 5. Instalação e execução
 
-Instale as dependências:
+Abra a pasta do projeto no Visual Studio Code (VS Code).
+
+No terminal integrado do VS Code, execute:
 
 pip install -r requirements.txt
 
-Configure o .env, inicie o serviço do Memurai e execute:
+Configure o arquivo .env, inicie o serviço do Memurai e execute:
 
 python main.py
 
@@ -63,5 +71,3 @@ Criação de reservas.
 Cálculo do valor da hospedagem.
 
 Relatório de reservas com utilização de cache.
-
-Observação: o Supabase armazena os dados permanentemente, enquanto o Redis mantém temporariamente os resultados das consultas para melhorar o desempenho do sistema.
